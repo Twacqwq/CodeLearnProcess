@@ -1,0 +1,8 @@
+oss:
+  bucketName: # name
+  accessKeyId: ENC(xxx)
+  accessKeySecret: ENC(xxx)
+  # OSS region
+  endpoint: oss-cn-hangzhou.aliyuncs.com
+  bucket: # bucket
+  fileHost: images
