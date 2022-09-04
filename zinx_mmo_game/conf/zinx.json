@@ -1,0 +1,9 @@
+{
+    "Name": "MMO Game Server",
+    "Host": "0.0.0.0",
+    "TcpPort": 50000,
+    "Version": "V0.10",
+    "MaxPackageSize": 1024,
+    "MaxConn": 3,
+    "WorkerPoolSize": 10
+}
