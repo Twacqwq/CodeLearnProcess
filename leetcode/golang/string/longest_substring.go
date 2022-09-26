@@ -1,4 +1,4 @@
-package main
+package string
 
 import "math"
 
@@ -21,9 +21,4 @@ func lengthOfLongestSubstring(s string) int {
 		result = int(math.Max(float64(result), float64(right-left+1)))
 	}
 	return result
-}
-
-func main() {
-	s := "abcabcbb"
-	println(lengthOfLongestSubstring(s))
 }

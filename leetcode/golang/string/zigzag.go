@@ -1,6 +1,4 @@
-package main
-
-import "fmt"
+package string
 
 func convert(s string, numRows int) string {
 	if numRows == 1 {
@@ -29,10 +27,4 @@ func convert(s string, numRows int) string {
 		}
 	}
 	return string(result)
-}
-
-func main() {
-	s := "PAYPALISHIRING"
-	result := convert(s, 3)
-	fmt.Println(result)
 }
