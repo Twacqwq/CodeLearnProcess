@@ -82,14 +82,14 @@ type request struct {
 }
 
 func (server *Server) readRequestHeader(cc codec.Codec) (*codec.Header, error) {
-	var h *codec.Header
-	if err := cc.ReadHeader(h); err != nil {
+	var h codec.Header
+	if err := cc.ReadHeader(&h); err != nil {
 		if err != io.EOF && err != io.ErrUnexpectedEOF {
 			log.Println("rpc server: read header error")
 		}
 		return nil, err
 	}
-	return h, nil
+	return &h, nil
 }
 
 func (server *Server) readRequest(cc codec.Codec) (*request, error) {
