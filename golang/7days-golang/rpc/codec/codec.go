@@ -3,8 +3,8 @@ package codec
 import "io"
 
 type Header struct {
+	ServiceMethod string
 	Seq           uint64 // 请求标识
-	ServiceMethod string // format: "Airth.Sum"
 	Error         string
 }
 
