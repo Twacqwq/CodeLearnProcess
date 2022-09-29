@@ -5,7 +5,7 @@ import "io"
 type Header struct {
 	Seq           uint64 // 请求标识
 	ServiceMethod string // format: "Airth.Sum"
-	Error         error
+	Error         string
 }
 
 // 消息体编解码器
@@ -29,4 +29,5 @@ var NewCodecFuncMap map[Type]NewCodecFunc
 
 func init() {
 	NewCodecFuncMap = make(map[Type]NewCodecFunc)
+	NewCodecFuncMap[GobType] = NewGobCodec
 }

@@ -31,7 +31,7 @@ func (c *GobCodec) ReadHeader(h *Header) error {
 }
 
 func (c *GobCodec) ReadBody(body interface{}) error {
-	return c.enc.Encode(body)
+	return c.dec.Decode(body)
 }
 
 func (c *GobCodec) Write(h *Header, body interface{}) (err error) {
