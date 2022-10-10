@@ -7,7 +7,7 @@ import (
 
 func main() {
 	r := gee.New()
-	r.Use(gee.Logger()) // 全局中间件
+	r.Use(gee.Logger(), gee.Revocery()) // 全局中间件
 	r.GET("/index", func(ctx *gee.Context) {
 		ctx.HTML(http.StatusOK, "<h1>XD</h1>")
 	})
@@ -35,6 +35,13 @@ func main() {
 		})
 
 	}
+
+	r.Static("/asserts", "./")
+
+	r.GET("/panic", func(c *gee.Context) {
+		names := []string{"geektutu"}
+		c.String(http.StatusOK, names[100])
+	})
 
 	r.Run(":8080")
 }

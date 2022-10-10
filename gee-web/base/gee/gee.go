@@ -3,7 +3,9 @@ package gee
 import (
 	"log"
 	"net/http"
+	"path"
 	"strings"
+	"text/template"
 )
 
 type HandlerFunc func(*Context)
@@ -17,8 +19,10 @@ type RouterGroup struct {
 
 type Engine struct {
 	*RouterGroup
-	router *router
-	groups []*RouterGroup
+	router        *router
+	groups        []*RouterGroup
+	htmlTemplates *template.Template
+	funcMap       template.FuncMap
 }
 
 func New() *Engine {
@@ -57,6 +61,25 @@ func (group *RouterGroup) POST(pattern string, handler HandlerFunc) {
 	group.addRoute("POST", pattern, handler)
 }
 
+func (group *RouterGroup) createStaticHandler(relativePath string, fs http.FileSystem) HandlerFunc {
+	absolutePath := path.Join(group.prefix, relativePath)
+	fileServer := http.StripPrefix(absolutePath, http.FileServer(fs))
+	return func(ctx *Context) {
+		file := ctx.Param("filepath")
+		if _, err := fs.Open(file); err != nil {
+			ctx.Status(http.StatusNotFound)
+			return
+		}
+		fileServer.ServeHTTP(ctx.Writer, ctx.Req)
+	}
+}
+
+func (group *RouterGroup) Static(relativePath, root string) {
+	handler := group.createStaticHandler(relativePath, http.Dir(root))
+	urlPattern := path.Join(relativePath, "/*filepath")
+	group.GET(urlPattern, handler)
+}
+
 func (e *Engine) addRoute(method, pattern string, handler HandlerFunc) {
 	e.router.addRoute(method, pattern, handler)
 }
@@ -71,6 +94,14 @@ func (e *Engine) POST(pattern string, handler HandlerFunc) {
 
 func (e *Engine) Run(addr string) {
 	http.ListenAndServe(addr, e)
+}
+
+func (e *Engine) SetFuncMap(funcMap template.FuncMap) {
+	e.funcMap = funcMap
+}
+
+func (e *Engine) LoadHTMLGlob(pattern string) {
+	e.htmlTemplates = template.Must(template.New("").Funcs(e.funcMap).ParseGlob(pattern))
 }
 
 func (e *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
