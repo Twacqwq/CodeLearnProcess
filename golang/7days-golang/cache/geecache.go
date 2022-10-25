@@ -1,6 +1,10 @@
 package cache
 
-import "sync"
+import (
+	"fmt"
+	"log"
+	"sync"
+)
 
 type Getter interface {
 	Get(key string) ([]byte, error)
@@ -38,4 +42,44 @@ func NewGroup(name string, cacheBytes int64, getter Getter) *Group {
 	}
 	groups[name] = g
 	return g
+}
+
+func GetGroup(name string) *Group {
+	mu.RLock()
+	defer mu.RUnlock()
+	g := groups[name]
+	return g
+}
+
+func (g *Group) Get(key string) (ByteView, error) {
+	if key == "" {
+		return ByteView{}, fmt.Errorf("key is required")
+	}
+	// 如果mainCache已缓存
+	if v, ok := g.mainCache.get(key); ok {
+		log.Println("[GeeCache] hit")
+		return v, nil
+	}
+
+	return g.load(key)
+}
+
+func (g *Group) load(key string) (value ByteView, err error) {
+	return g.getLocally(key)
+}
+
+// 调用回调函数获取缓存
+func (g *Group) getLocally(key string) (ByteView, error) {
+	bytes, err := g.getter.Get(key)
+	if err != nil {
+		return ByteView{}, err
+	}
+	value := ByteView{b: cloneBytes(bytes)}
+	g.populateCache(key, value)
+	return value, nil
+}
+
+// 向mainCache填充缓存
+func (g *Group) populateCache(key string, value ByteView) {
+	g.mainCache.add(key, value)
 }
