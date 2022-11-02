@@ -11,6 +11,7 @@ var cache map[int]int
 
 // 先中序构造二叉树
 func buildTree(preorder, inorder []int) *TreeNode {
+	cache = make(map[int]int)
 	for i := 0; i < len(inorder); i++ {
 		cache[inorder[i]] = i
 	}
