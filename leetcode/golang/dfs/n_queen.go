@@ -56,13 +56,13 @@ func isValid(board [][]string, row, col int) bool {
 		}
 	}
 	// 正斜线
-	for i, j := row, col; i > 0 && j > 0; i, j = i-1, j-1 {
+	for i, j := row, col; i >= 0 && j >= 0; i, j = i-1, j-1 {
 		if board[i][j] == "Q" {
 			return false
 		}
 	}
 	// 反斜线
-	for i, j := row, col; i > 0 && j > 0; i, j = i-1, j+1 {
+	for i, j := row, col; i >= 0 && j < n; i, j = i-1, j+1 {
 		if board[i][j] == "Q" {
 			return false
 		}
